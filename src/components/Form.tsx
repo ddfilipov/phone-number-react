@@ -1,4 +1,4 @@
-import { ChangeEvent, FC, FormEvent, useEffect, useState } from "react";
+import { ChangeEvent, FC, FormEvent, useState } from "react";
 import PhoneNumber, { Value } from "react-phone-number-input";
 import "react-phone-number-input/style.css";
 
@@ -26,15 +26,12 @@ export const Form: FC = () => {
         customPhoneNumber: "+34",
     };
     const [formValues, setFormValues] = useState<IFormValues>(initialState);
-    const [bustedPhoneNumber, setBustedPhoneNumber] = useState<Value>(initialState.customPhoneNumber);
 
     const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault();
     };
 
     const onChangeValue = (event: ChangeEvent<HTMLInputElement> | IEventLite) => {
-        console.log(event.target.name, "is changing!! ");
-        // setFormValues({...formValues,[event.target.name: event.target.value]})
         setFormValues({ ...formValues, [event.target.name]: event.target.value });
     };
 
@@ -54,9 +51,8 @@ export const Form: FC = () => {
             </div>
             <div>
                 <label htmlFor="phoneNumber">Phone Number</label>
-                {/* <PhoneNumber value={bustedPhoneNumber} onChange={setBustedPhoneNumber as any} /> */}
                 <PhoneNumber
-                    value={bustedPhoneNumber}
+                    value={formValues.customPhoneNumber}
                     onChange={(e) => {
                         onChangeValue({ target: { name: "customPhoneNumber", value: e } } as IEventLite);
                     }}
@@ -65,7 +61,6 @@ export const Form: FC = () => {
             <button type="submit">Submit</button>
             <hr />
             <p>formValues::{JSON.stringify(formValues)}</p>
-            <p>bustedPhoneNumber::{bustedPhoneNumber}</p>
         </form>
     );
 };
