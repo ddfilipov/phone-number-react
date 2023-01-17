@@ -1,6 +1,15 @@
 import { ChangeEvent, FC, FormEvent, useEffect, useState } from "react";
-import PhoneNumber from "react-phone-number-input";
+import PhoneNumber, { Value } from "react-phone-number-input";
 import "react-phone-number-input/style.css";
+
+interface ITargetLite {
+    name: string;
+    value: Value;
+}
+
+interface IEventLite {
+    target: ITargetLite;
+}
 
 interface IFormValues {
     name: string;
@@ -14,16 +23,17 @@ export const Form: FC = () => {
         name: "",
         surname: "",
         phoneNumber: "",
-        customPhoneNumber: "",
+        customPhoneNumber: "+34",
     };
     const [formValues, setFormValues] = useState<IFormValues>(initialState);
+    const [bustedPhoneNumber, setBustedPhoneNumber] = useState<Value>(initialState.customPhoneNumber);
 
     const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault();
     };
 
-    const onChangeValue = (event: ChangeEvent<HTMLInputElement>) => {
-        console.log("I'm changing!! ", event.target.name);
+    const onChangeValue = (event: ChangeEvent<HTMLInputElement> | IEventLite) => {
+        console.log(event.target.name, "is changing!! ");
         // setFormValues({...formValues,[event.target.name: event.target.value]})
         setFormValues({ ...formValues, [event.target.name]: event.target.value });
     };
@@ -40,15 +50,22 @@ export const Form: FC = () => {
             </div>
             <div>
                 <label htmlFor="phoneNumber">Phone Number</label>
-                <input id="phoneNumber" name="phoneNumber" type="text" onChange={onChangeValue} />
+                <input id="phoneNumber" name="phoneNumber" type="text" onChange={(e) => onChangeValue(e)} />
             </div>
             <div>
                 <label htmlFor="phoneNumber">Phone Number</label>
-                <PhoneNumber value={formValues.customPhoneNumber} onChange={() => {}} />
+                {/* <PhoneNumber value={bustedPhoneNumber} onChange={setBustedPhoneNumber as any} /> */}
+                <PhoneNumber
+                    value={bustedPhoneNumber}
+                    onChange={(e) => {
+                        onChangeValue({ target: { name: "customPhoneNumber", value: e } } as IEventLite);
+                    }}
+                />
             </div>
             <button type="submit">Submit</button>
             <hr />
-            {JSON.stringify(formValues)}
+            <p>formValues::{JSON.stringify(formValues)}</p>
+            <p>bustedPhoneNumber::{bustedPhoneNumber}</p>
         </form>
     );
 };
